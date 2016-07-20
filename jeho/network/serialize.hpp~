@@ -1,0 +1,18 @@
+#pragma once
+
+namespace jeho{ namespace network {
+
+    
+    
+    template<typename Func,typename Args>
+    std::string serialize(Args const&args)
+    {
+    }
+
+    template<typename Result>
+    Result  unserialize(std::string const& text)
+    {
+      
+    }
+
+  }}

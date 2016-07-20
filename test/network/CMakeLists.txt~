@@ -1,0 +1,10 @@
+LINK_LIBRARIES(boost_coroutine)
+LINK_LIBRARIES(boost_serialization)
+LINK_LIBRARIES(pthread)
+
+#add_executable(client  client_test.cpp)
+#add_executable(func  func.cpp)
+add_executable(server  server.cpp)
+
+
+

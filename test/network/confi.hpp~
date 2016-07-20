@@ -1,0 +1,4 @@
+#pragma once
+
+const std::string address = "localhost";
+const std::string port = "1111";

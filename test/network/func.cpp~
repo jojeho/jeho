@@ -1,0 +1,34 @@
+#include <jeho/network/func_request.hpp>
+#include <string>
+#include <iostream>
+struct test1
+{
+  int operator()(std::string const&k)
+  {
+    return 1;
+  }
+};
+
+struct test2
+{
+  int operator()(std::string const&k,int const& p)
+  {
+    return 2;
+  }
+};
+
+
+
+int main(int argc , char* argv[])
+{
+  std::string ii ;
+  auto b = jeho::network::execute<test1,1>()(ii);
+  std::cout<<b<<std::endl;
+  int cx;
+
+  boost::hana::tuple<std::string ,int> s(ii,cx);
+  
+  auto c = jeho::network::execute<test2,2>()(s);
+  std::cout<<c<<std::endl;
+  return 1;
+}

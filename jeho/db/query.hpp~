@@ -1,0 +1,55 @@
+#pragma once
+#include "boost/type_index.hpp"
+#include <list>
+namespace jeho { namespace db {
+
+    template<typename T>
+    std::string type_name()
+    {
+      return boost::typeindex::type_id<T>().pretty_name();
+    }
+
+    struct gt
+    {};
+
+    struct lt
+    {};
+
+    struct ge
+    {};
+
+    struct le
+    {};
+
+    struct eq
+    {};
+
+    struct and_
+    {};
+
+    struct or_
+    {};
+     
+
+    struct sentence
+    {
+      std::string column;
+      std::string value;
+      std::string op;
+    };
+    
+
+    struct query
+    {
+      std::string q_;
+      query(std::string q):q_(q)
+      {}
+      
+    };
+
+    std::list<sentence> sentences(query const&q)
+    {
+      
+    }
+    
+  }}

@@ -1,0 +1,77 @@
+//#include "jeho/network/req_res.hpp"
+//#include  "server_config.hpp"
+#include <chrono>
+#include <string>
+#include <boost/hana.hpp>
+#include <jeho/network/connection.hpp>
+#include <jeho/network/req_client.hpp>
+#include <list>
+
+#include <jeho/stream/binary_archive.hpp>
+#include "config.hpp"
+#include <iostream>
+
+//boost::asio::io_service io_service;
+
+template<typename Func>
+struct req_res
+{
+  //using iterator = typename std::list<Result>::iterator;
+  //bstd::list<typename Func::result> rs;
+  using result_t = typename Func::result;
+  using args_t    = typename Func::args;
+  std::list<result_t> results;
+
+  template<typename ...Args>
+  req_res(jeho::network::connection const&con
+	  ,Args... args)
+  {
+    // stream ss;
+    boost::asio::io_service io;
+
+    func_format<Func> f;
+    f.args = boost::hana::make_tuple(args...);
+    std::string func_name = typeid(Func).name();
+    std::stringstream ss;
+    ss<<func_name<<":";
+    jeho::stream::out<jeho::stream::binary_archive>(ss ,f);
+    jeho::network::req_client client(con,io);
+    auto result = client.request(ss.str());
+    if(result == "0")
+      {
+	std::cout<<"can't find function "<<func_name<<std::endl;
+      }
+
+    std::stringstream is(result);
+    jeho::stream::in<jeho::stream::binary_archive>(is ,results);
+    //std::cout<<" low price "<<r.low_price<<std::endl;
+    //results.push_back(r);
+    //results = jeho::network::unserialize<result_t>(result);
+  }
+
+  // iterator begin()
+  // {
+  //   return std::begin(rs);
+  // }
+
+  
+  // iterator end()
+  // {
+  //   return std::end(rs);
+  // }
+
+};
+
+using code = std::string;
+
+int main()
+{
+  jeho::network::connection con(address , port);
+  std::string code ;
+  int i;
+  auto b =req_res<one_day_stock_base>(con,code,i);
+  
+  //auto begin = std::begin(bb);
+  //auto end = std::end(bb);
+}
+

@@ -1,0 +1,19 @@
+#include "jeho/cast/archive.hpp"
+
+using namespace jeho::cast;
+
+struct t
+{
+  std::string name;
+  int i ;
+};
+
+void  main()
+{
+  std::stringsteram s;
+  t t;
+  jeho::stream::out<binary_archive> in(ss,t);
+  std::cout<<s.str();
+}
+
+  
