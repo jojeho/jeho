@@ -8,18 +8,18 @@
 
 //session define way of sending and receiving with client
 
-namespace jeho { namespace network{
+namespace jeho { namespace network{ namespace req {
     
     template<typename RequestHandle>
-    class req_session : public std::enable_shared_from_this<req_session<RequestHandle>>
+    class session : public std::enable_shared_from_this<req_session<RequestHandle>>
     {
     public:
-      explicit req_session(tcp::socket socket)
+      explicit session(tcp::socket socket)
 	: socket_(std::move(socket)),
 	  strand_(socket_.get_io_service())
       {}
 
-      ~req_session()
+      ~session()
       {
 	//std::cout<<"leave request session"<<std::endl;
       }
@@ -43,25 +43,23 @@ namespace jeho { namespace network{
 			     	 long result_size = result->size();
 			     	 data.resize(req_protocol::header_length);
 				 std::string length = std::to_string(result_size);
+				 std::fill_n(std::begin(data) ,  req_protocol::header_length, ' ');
 				 std::copy(std::begin(length),std::end(length) , std::begin(data));
 			     	 std::vector<boost::asio::const_buffer> buffers;
 			     	 buffers.push_back(boost::asio::buffer(data));
 			     	 buffers.push_back(boost::asio::buffer(*result , result_size));
-			     	 boost::asio::async_write(socket_
-			     				  ,buffers
-			     				  ,yield);
+			     	 boost::asio::async_write(socket_ ,buffers,yield);
 			       }
 			     else
 			       {
 				 long result_size = 0;
 			     	 data.resize(req_protocol::header_length);
 				 std::string length = std::to_string(result_size);
+				 std::fill_n(std::begin(data) ,  req_protocol::header_length, ' ');
 				 std::copy(std::begin(length),std::end(length) , std::begin(data));
 			     	 std::vector<boost::asio::const_buffer> buffers;
 			     	 buffers.push_back(boost::asio::buffer(data));
-			     	 boost::asio::async_write(socket_
-			     				  ,boost::asio::buffer(data)
-			     				  ,yield);
+			     	 boost::asio::async_write(socket_,boost::asio::buffer(data),yield);
 				 
 			       }
 			     close();

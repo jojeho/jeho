@@ -8,18 +8,18 @@
 
 //session define way of sending and receiving with client
 
-namespace jeho { namespace network{
+namespace jeho { namespace network{ namespace req {
     
     template<typename RequestHandle>
-    class req_session : public std::enable_shared_from_this<req_session<RequestHandle>>
+    class session : public std::enable_shared_from_this<req::session<RequestHandle>>
     {
     public:
-      explicit req_session(tcp::socket socket)
+      explicit session(tcp::socket socket)
 	: socket_(std::move(socket)),
 	  strand_(socket_.get_io_service())
       {}
 
-      ~req_session()
+      ~session()
       {
 	//std::cout<<"leave request session"<<std::endl;
       }
@@ -76,4 +76,4 @@ namespace jeho { namespace network{
       boost::asio::io_service::strand strand_;
       };
 
-    }}
+    }}}

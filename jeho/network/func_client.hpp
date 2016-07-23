@@ -14,7 +14,7 @@
 namespace jeho { namespace network {
 	
     template<typename Func>
-    struct req_res
+    struct func_client
     {
       //using iterator = typename std::list<Result>::iterator;
       //bstd::list<typename Func::result> rs;
@@ -23,7 +23,7 @@ namespace jeho { namespace network {
       result_t results;
 
       template<typename ...Args>
-      req_res(jeho::network::connection const&con
+      func_client(jeho::network::connection const&con
 	      ,Args... args)
       {
 	// stream ss;
