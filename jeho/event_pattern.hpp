@@ -3,15 +3,15 @@
 namespace jeho {
 
   template<typename Func, typename T,typename Constrain>
-  struct req_res
+  struct req
   {};
 
   template<typename Func, typename Constrain>
-  struct req_void
+  struct dump
   {};
 
   template<typename Func, typename T,typename Constrain>
-  struct req_up
+  struct circle
   {};
   
 }
