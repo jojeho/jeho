@@ -32,11 +32,11 @@ void insert_test()
   sb.code = "xxx";
   sbs.push_back(sb);
 
-  connection con(db_connection_string , db_name);
+  auto con = std::make_shared<connection>(db_connection_string , db_name);
   
   //auto s = req_void<insert,stock_base>(con);
 
-
+  
   insert_iterator<stock_base> it(con);
   //*it = sb;
   //it++;
@@ -50,7 +50,7 @@ void select_test(std::string query)
   //mongo::update_iterator up(con ,q);
   //mongo::remove_iterator rm(con ,q);
 
-  connection con(db_connection_string , db_name);
+  auto con = std::make_shared<connection>(db_connection_string , db_name);
   auto b =  mongo::cursor<stock_base>(con, q);
   auto begin = std::begin(b);
   auto end = std::end(b);
@@ -72,7 +72,7 @@ void select_test(std::string query)
 
 void sel_pattern(std::string query)
 {
-  mongo::connection con(db_connection_string , db_name);
+  auto con = std::make_shared<mongo::connection>(db_connection_string , db_name);
   jeho::db::query q("all");
   auto s = mongo::req_res<mongo::select,stock_base,jeho::db::query>(con,q);
 
@@ -89,7 +89,7 @@ void sel_pattern(std::string query)
 
   void in_pattern()
   {
-    mongo::connection con(db_connection_string, db_name);
+    auto con = std::make_shared<mongo::connection>(db_connection_string, db_name);
     auto s = mongo::req_up<mongo::insert , stock_base , jeho::db::query>(con,jeho::db::query(""));
     auto it = std::begin(s);
 

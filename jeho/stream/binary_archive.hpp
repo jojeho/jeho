@@ -1,8 +1,18 @@
 #pragma once
 #include "in.hpp"
 #include "out.hpp"
-#include <boost/archive/binary_oarchive.hpp>
-#include <boost/archive/binary_iarchive.hpp>
+
+//#include <boost/archive/binary_oarchive.hpp>
+//#include <boost/archive/binary_iarchive.hpp>
+
+///**********************************
+///binary_archive is fail in case big data. 
+///**********************************
+
+#include <boost/archive/text_oarchive.hpp>
+#include <boost/archive/text_iarchive.hpp>
+#include "archive.hpp"
+
 #include "archive.hpp"
 
 namespace jeho { namespace stream {
@@ -16,7 +26,7 @@ namespace jeho { namespace stream {
       template<typename Stream,typename T>
       out(Stream&s , T const&t)
       {
-	boost::archive::binary_oarchive ar(s);
+	boost::archive::text_oarchive ar(s);
 	jeho::stream::operator<<(ar,t);
 	//jeho::stream::operator>><boost::archive::binary_oarchive,T>(ar,t);
 	//out_from<boost::archive::binary_oarchive,T>(ar,t);
@@ -35,7 +45,7 @@ namespace jeho { namespace stream {
       template<typename Stream , typename T>
       in(Stream & s , T &t)
       {
-	boost::archive::binary_iarchive ar(s);
+	boost::archive::text_iarchive ar(s);
 	//jeho::stream::operator<<<boost::archive::binary_iarchive,T>(ar ,t);
 	jeho::stream::operator>>(ar, t);
 	//in_to<boost::archive::binary_iarchive,T>(ar, t);

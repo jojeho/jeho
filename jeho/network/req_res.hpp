@@ -35,7 +35,7 @@ namespace jeho { namespace network {
 	std::stringstream ss;
 	ss<<func_name<<":";
 	  jeho::stream::out<jeho::stream::binary_archive>(ss ,f);
-	jeho::network::req_res_client client(con,io);
+        jeho::network::req_client client(con,io);
 	auto result = client.request(ss.str());
 	if(result == "0")
 	  {

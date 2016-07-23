@@ -90,18 +90,18 @@ struct connection
     std::shared_ptr<mongocxx::cursor> cur;
     bsoncxx::builder::stream::document ff;
     //a/mongocxx::cursor::iterator it;
-    cursor(connection const& con, jeho::db::query const& q)
+    cursor(std::shared_ptr<connection> const& con, jeho::db::query const& q)
     {
-      col = std::make_shared<mongocxx::collection>(con.db[jeho::db::type_name<T>()]);
+      col = std::make_shared<mongocxx::collection>(con->db[jeho::db::type_name<T>()]);
       auto query = make_query<T>(q);
       cur = std::make_shared<mongocxx::cursor>(col->find(query.view()));
     }
 
-    cursor(connection const& con
+    cursor(std::shared_ptr<connection> const& con
 	   ,std::string sub_db
 	   ,jeho::db::query const& q)
     {
-      col = std::make_shared<mongocxx::collection>(con.db[sub_db +"." + jeho::db::type_name<T>()]);
+      col = std::make_shared<mongocxx::collection>(con->db[sub_db +"." + jeho::db::type_name<T>()]);
       std::cout<<sub_db +"." + jeho::db::type_name<T>()<<std::endl;
       auto query = make_query<T>(q);
       cur = std::make_shared<mongocxx::cursor>(col->find(query.view()));
@@ -236,12 +236,20 @@ struct connection
   {
     typedef insert_iterator<T> self;
     mongocxx::collection col_;
-    connection const& con_;
+    std::shared_ptr<connection> const& con_;
     T t_;
-    insert_iterator(connection const& con):con_(con)
+    insert_iterator(std::shared_ptr<connection> const& con):con_(con)
     {
       auto name = jeho::db::type_name<T>();
-      col_ = con_.db[name];
+      std::cout<<" name "<<name<<std::endl;
+      col_ = con_->db[name];
+    }
+
+    insert_iterator(std::shared_ptr<connection> const& con ,std::string const& sub_db):con_(con)
+    {
+      auto name = jeho::db::type_name<T>();
+      std::cout<<" name "<<name<<std::endl;
+      col_ = con_->db[name + "." + sub_db];
     }
 
     

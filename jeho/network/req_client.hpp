@@ -3,22 +3,22 @@
 #include "req_protocol.hpp"
 #include "connection.hpp"
 namespace jeho {
-  namespace network {
-    using  boost::asio::ip::tcp;
-    struct req_res_client
-    {
-      req_protocol read_msg_;
-      tcp::socket socket_;
-      boost::asio::io_service & is_;
-      req_res_client(connection const& con,
-		     boost::asio::io_service& is) :is_(is), socket_(is)
-      {
-	boost::asio::ip::tcp::socket socket(is);
-	boost::asio::ip::tcp::resolver resolver(is);
-	boost::asio::ip::tcp::resolver::query query(con.address, con.port);
-	auto endpoint_iterator = resolver.resolve(query);
-	boost::asio::connect(socket_, endpoint_iterator);
-      }
+namespace network {
+		using  boost::asio::ip::tcp;
+		struct req_client
+		{
+			req_protocol read_msg_;
+			tcp::socket socket_;
+			boost::asio::io_service & is_;
+			req_client(connection const& con,
+				boost::asio::io_service& is) :is_(is), socket_(is)
+			{
+				boost::asio::ip::tcp::socket socket(is);
+				boost::asio::ip::tcp::resolver resolver(is);
+				boost::asio::ip::tcp::resolver::query query(con.address, con.port);
+				auto endpoint_iterator = resolver.resolve(query);
+				boost::asio::connect(socket_, endpoint_iterator);
+			}
 
       std::string request(std::string const& args)
       {
