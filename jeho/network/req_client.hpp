@@ -4,12 +4,12 @@
 namespace jeho {
 	namespace network {
 		using  boost::asio::ip::tcp;
-		struct req_res_client
+		struct req_client
 		{
 			req_protocol read_msg_;
 			tcp::socket socket_;
 			boost::asio::io_service & is_;
-			req_res_client(connection const& con,
+			req_client(connection const& con,
 				boost::asio::io_service& is) :is_(is), socket_(is)
 			{
 				boost::asio::ip::tcp::socket socket(is);
