@@ -43,6 +43,7 @@ namespace jeho { namespace network{
 			     	 long result_size = result->size();
 			     	 data.resize(req_protocol::header_length);
 				 std::string length = std::to_string(result_size);
+				 std::fill_n(std::begin(data) ,  req_protocol::header_length, ' ');
 				 std::copy(std::begin(length),std::end(length) , std::begin(data));
 			     	 std::vector<boost::asio::const_buffer> buffers;
 			     	 buffers.push_back(boost::asio::buffer(data));
@@ -54,6 +55,7 @@ namespace jeho { namespace network{
 				 long result_size = 0;
 			     	 data.resize(req_protocol::header_length);
 				 std::string length = std::to_string(result_size);
+				 std::fill_n(std::begin(data) ,  req_protocol::header_length, ' ');
 				 std::copy(std::begin(length),std::end(length) , std::begin(data));
 			     	 std::vector<boost::asio::const_buffer> buffers;
 			     	 buffers.push_back(boost::asio::buffer(data));

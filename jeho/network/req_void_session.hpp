@@ -31,6 +31,7 @@ namespace jeho { namespace network{
 	[this, self](boost::asio::yield_context yield)
 			   {
 			     std::vector<char> data(req_protocol::header_length);
+			     std::fill_n(std::begin(data) ,  req_protocol::header_length, ' ');
 			     boost::asio::read(socket_ ,boost::asio::buffer(data));
 
 			     //no lexical_cast , it's error;
