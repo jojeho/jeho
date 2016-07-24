@@ -11,8 +11,7 @@ namespace jeho {
 	req_protocol read_msg_;
 	tcp::socket socket_;
 	boost::asio::io_service & is_;
-	client(connection const& con,
-		   boost::asio::io_service& is) :is_(is), socket_(is)
+        client(connection const& con) :is_(con.is), socket_(is)
 	{
 	  boost::asio::ip::tcp::socket socket(is);
 	  boost::asio::ip::tcp::resolver resolver(is);

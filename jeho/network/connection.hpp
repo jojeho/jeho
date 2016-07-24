@@ -7,6 +7,7 @@ namespace jeho { namespace network{
     {
       std::string address;
       std::string  port;
+      boost::asio::io_service is;
       connection(std::string const&addr
 		 , std::string const& p):address(addr),port(p){}
 
