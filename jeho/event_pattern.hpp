@@ -13,5 +13,6 @@ namespace jeho {
   template<typename Func, typename T,typename Constrain>
   struct circle
   {};
-  
+
 }
+

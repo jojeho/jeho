@@ -42,7 +42,7 @@ namespace jeho { namespace db {
     }op;
     
       template<typename Iterator>
-      struct query_parser : qi::grammar<Iterator, std::vector<jeho::db::big_map>(), ascii::space_type>
+      struct query_parser : qi::grammar<Iterator, std::vector<jeho::db::sentence>(), ascii::space_type>
       {
 	query_parser() : query_parser::base_type(start)
 	{
@@ -93,8 +93,13 @@ namespace jeho { namespace db {
       };
 
 
-    std::vector<jeho::db::sentence> query_parse(std::string const&str)
+    std::vector<jeho::db::sentence> sentences(std::string const&str)
     {
+      if(str =="" || str == "all")
+	{
+	  return std::vector<jeho::db::sentence>();
+	}
+
       std::string::const_iterator iter = str.begin();
       std::string::const_iterator end = str.end();
       using boost::spirit::ascii::space;
@@ -109,7 +114,8 @@ namespace jeho { namespace db {
 
       std::string message ;
       message = "fail to parse " +str;
-      throw std::overflow_error(message.c_str());
+      std::cout<<message<<std::endl;
+      throw std::runtime_error(message.c_str());
       return result;
     }
     

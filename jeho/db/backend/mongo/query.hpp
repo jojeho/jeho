@@ -3,7 +3,7 @@
 #include <boost/lexical_cast.hpp>
 #include <boost/hana.hpp>
 
-#include "../query.hpp"
+#include <jeho/db/query.hpp>
 #include "common.hpp"
 
 #include <iomanip>
@@ -48,10 +48,11 @@ using bsoncxx::builder::stream::finalize;
       {
 	return "$gte";
       }
-    else if(e == "!")
+    else if(e == "!=")
       {
 	return "$ne";
       }
+
     else if(e =="=")
       {
 	return "";
