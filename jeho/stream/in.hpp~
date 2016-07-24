@@ -1,9 +1,0 @@
-#pragma once
-
-namespace jeho { namespace stream {
-
-    template<typename Stream,typename T>
-    struct in
-    {};
-
-  }}
