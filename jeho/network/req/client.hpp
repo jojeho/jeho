@@ -10,12 +10,11 @@ namespace jeho {
       {
 	req_protocol read_msg_;
 	tcp::socket socket_;
-	boost::asio::io_service & is_;
-        client(connection const& con) :is_(con.is), socket_(is)
+	std::unique_ptr<connection> & con;
+	 client(std::unique_ptr<connection> & c) :con(c),socket_(con->is)
 	{
-	  boost::asio::ip::tcp::socket socket(is);
-	  boost::asio::ip::tcp::resolver resolver(is);
-	  boost::asio::ip::tcp::resolver::query query(con.address, con.port);
+	  boost::asio::ip::tcp::resolver resolver(con->is);
+	  boost::asio::ip::tcp::resolver::query query(con->address, con->port);
 	  auto endpoint_iterator = resolver.resolve(query);
 	  boost::asio::connect(socket_, endpoint_iterator);
 	}
