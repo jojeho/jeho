@@ -1,9 +1,10 @@
 #pragma once
+#include <boost/asio.hpp>
 #include "../connection.hpp"
 #include "dump_protocol.hpp"
 
 namespace jeho { namespace network { namespace dump{
-
+	using  boost::asio::ip::tcp;
       struct client
       {
 	dump_protocol read_msg_;
