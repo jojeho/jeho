@@ -1,7 +1,7 @@
 #pragma once
 #include <chrono>
 
-namespace jeho { namespace stream {
+namespace jeho { namespace io {
 
     
     std::string to_string(std::chrono::system_clock::time_point const&tp)

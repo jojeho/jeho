@@ -1,11 +1,11 @@
-#include "jeho/stream/binary_archive.hpp"
+#include "jeho/io/binary_archive.hpp"
 #include <string>
 #include <iostream>
 #include <sstream>
 #include <boost/hana.hpp>
-#include <jeho/stream/to_string.hpp>
+#include <jeho/io/to_string.hpp>
 
-using namespace jeho::stream;
+using namespace jeho::io;
 struct t
 {
   BOOST_HANA_DEFINE_STRUCT(t ,

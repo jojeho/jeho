@@ -1,4 +1,5 @@
 #pragma once
+#include <boost/asio.hpp>
 #include <string>
 #include <boost/lexical_cast.hpp>
 namespace jeho { namespace network{

@@ -9,7 +9,7 @@ namespace jeho { namespace network { namespace dump{
 	dump_protocol read_msg_;
 	tcp::socket socket_;
         std::shared_ptr<connection> & con;
-        client(std::shared_ptr<connection> & c) :con(c), socket_(c.is)
+        client(std::shared_ptr<connection> & c) :con(c), socket_(c->is)
 	{
           boost::asio::ip::tcp::socket socket(con->is);
           boost::asio::ip::tcp::resolver resolver(con->is);
@@ -20,13 +20,13 @@ namespace jeho { namespace network { namespace dump{
 
         void send(std::string const& text)
         {
-	  std::vector<char> data(req_protocol::header_length);
+	  std::vector<char> data(dump_protocol::header_length);
           std::fill_n(std::begin(data) ,  dump_protocol::header_length, ' ');
           std::string length = std::to_string(text.size());
 	  std::copy(std::begin(length), std::end(length), std::begin(data));
 	  std::vector<boost::asio::const_buffer> buffers;
 	  buffers.push_back(boost::asio::buffer(data));
-	  buffers.push_back(boost::asio::buffer(args));
+	  buffers.push_back(boost::asio::buffer(text));
 	  boost::asio::write(socket_, buffers);
 	}
       };

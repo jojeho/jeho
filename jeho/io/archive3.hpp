@@ -9,7 +9,7 @@
 //#include <boost/serialization/map.hpp>
 //#include <boost/serialization/set.hpp>
 
-namespace jeho { namespace stream {
+namespace jeho { namespace io {
 
     template <typename T> struct is_assoc {
       static bool const value = false;  

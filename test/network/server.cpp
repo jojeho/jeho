@@ -1,4 +1,4 @@
-#include "jeho/network/req_res.hpp"
+//#include "jeho/network/req_res.hpp"
 #include "config.hpp"
 //using namespace jeho::network;
 
@@ -10,7 +10,7 @@ int main(int argc , char*argv[])
   // 	return 1;
   //   }
 
-  jeho::network::connection con(address , port);
-  server  xbse(con);
+  //jeho::network::connection con(address , port);
+  //server  xbse(con);
 }
 

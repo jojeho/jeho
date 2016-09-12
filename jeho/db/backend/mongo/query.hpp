@@ -4,12 +4,13 @@
 #include <boost/hana.hpp>
 
 #include <jeho/db/query.hpp>
+#include <jeho/db/meta.hpp>
 #include "common.hpp"
 
 #include <iomanip>
 
 namespace mongo {
-
+  using namespace jeho::db;
 using  ptime = std::chrono::time_point<std::chrono::system_clock>;  
 
   std::string to_string(ptime const&t)
@@ -55,7 +56,7 @@ using bsoncxx::builder::stream::finalize;
 
     else if(e =="=")
       {
-	return "";
+	return "$eq";
       }
 
     std::string msg("no operator in parsing query");
@@ -105,7 +106,24 @@ using bsoncxx::builder::stream::finalize;
   }
 
   template<typename T
-	   ,typename std::enable_if<!std::is_same<T, ptime>::value ,T>::type* = nullptr>
+	   ,typename std::enable_if<is_vector<T>::value || boost::hana::Struct<T>::value,T>::type* = nullptr
+	   >
+  void convert_value(  		bsoncxx::builder::stream::document & doc
+				,std::string const& column
+				,std::string const& value
+				,std::string const& op)
+  {
+    
+  }
+
+
+
+  
+  template<typename T
+	   ,typename std::enable_if<!std::is_same<T, ptime>::value
+				    &&!is_vector<T>::value
+				    &&!boost::hana::Struct<T>::value
+				    ,T>::type* = nullptr>
   void convert_value(
   		     bsoncxx::builder::stream::document & doc
   		     ,std::string const&column
@@ -114,7 +132,7 @@ using bsoncxx::builder::stream::finalize;
 
   		     )
   {
-    //std::cout<<"xx" <<column<<" "<<value<<" "<<op<<std::endl;
+    //std::cout<<"column:" <<column<<" value:"<<value<<" op:"<<op<<std::endl;
 
     if(op != "")
       doc<<column<<open_document<<op<<boost::lexical_cast<T>(value)<<close_document;
@@ -131,6 +149,13 @@ using bsoncxx::builder::stream::finalize;
     T t;
     bsoncxx::builder::stream::document filter_builder;
     auto st = jeho::db::sentences(q.str);
+
+    if(st.size() ==0)
+      {
+	filter_builder<<finalize;
+	return filter_builder;
+      }
+    
     for(auto s : st)
       {
     	auto op = convert_op(s.cv.op);

@@ -119,7 +119,7 @@ int main(int argc , char* argv[])
     }
       
   //select(s);
-  //insert();
+  insert();
   //  sel_pattern(s);
   in_pattern();
   return 1;

@@ -15,7 +15,7 @@
 
 #include "archive.hpp"
 
-namespace jeho { namespace stream {
+namespace jeho { namespace io {
 
     struct binary_archive
     {};
@@ -27,7 +27,7 @@ namespace jeho { namespace stream {
       out(Stream&s , T const&t)
       {
 	boost::archive::text_oarchive ar(s);
-	jeho::stream::operator<<(ar,t);
+	jeho::io::operator<<(ar,t);
 	//jeho::stream::operator>><boost::archive::binary_oarchive,T>(ar,t);
 	//out_from<boost::archive::binary_oarchive,T>(ar,t);
 	// boost::hana::for_each(boost::hana::keys(t), [&](auto  b)
@@ -47,7 +47,7 @@ namespace jeho { namespace stream {
       {
 	boost::archive::text_iarchive ar(s);
 	//jeho::stream::operator<<<boost::archive::binary_iarchive,T>(ar ,t);
-	jeho::stream::operator>>(ar, t);
+	jeho::io::operator>>(ar, t);
 	//in_to<boost::archive::binary_iarchive,T>(ar, t);
 	// boost::hana::for_each(boost::hana::keys(t), [&](auto b)
 	// 		      {

@@ -1,6 +1,14 @@
 #pragma once
-#include "jeho/network/req_res.hpp"
+#include <boost/hana.hpp>
+#include <chrono>
+#include <string>
+#include <list>
+#include <iostream>
+//#include "jeho/network/func_
+//#include "jeho/network/req_res.hpp"
 #include <set>
+#include "jeho/network/server.hpp"
+
 using ptime = std::chrono::system_clock::time_point;
 struct my_ss {
 
@@ -61,9 +69,9 @@ struct one_day_stock_base2
 
 using funcs = boost::hana::tuple<one_day_stock_base,one_day_stock_base2> ;
 
-using func_request = jeho::network::func_request<funcs>;
-using session = jeho::network::req_session<func_request> ;
-using server  = jeho::network::server<session> ;
+//using func_request = jeho::network::func_request<funcs>;
+//using session = jeho::network::req_session<func_request> ;
+//using server  = jeho::network::server<session> ;
 boost::asio::io_service io_service;
 
 

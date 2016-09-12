@@ -5,7 +5,7 @@
 #include <list>
 #include <boost/serialization/list.hpp>
 
-namespace jeho { namespace stream {
+namespace jeho { namespace io {
 
     template <typename T> struct is_container {
       static bool const value = false;  

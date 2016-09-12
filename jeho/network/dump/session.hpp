@@ -28,6 +28,7 @@ namespace jeho { namespace network { namespace dump{
 
 			       //no lexical_cast , it's error;
 			       long body_length  = std::atol(&data[0]);
+			       //std::cout<<" body lenth "<<body_length<<std::endl;
 			       data.resize(body_length);
 			       boost::asio::read(socket_ ,boost::asio::buffer(data));
 			       close();

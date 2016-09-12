@@ -36,12 +36,11 @@ namespace mongo {
   struct circle<insert,T,jeho::db::query> 
   {
     std::string sub_db;
-    std::shared_ptr<mongo::connection> const&c ;
-    circle(std::shared_ptr<mongo::connection> const& con , jeho::db::query const&q):c(con),sub_db("")
+    std::shared_ptr<mongo::connection> c ;
+    circle(std::shared_ptr<mongo::connection>  con , jeho::db::query const&q):c(con),sub_db("")
     {}
 
-    circle(std::shared_ptr<mongo::connection> const& con , std::string const&sdb
-	   ,jeho::db::query const&q):c(con),sub_db(sdb)
+    circle(std::shared_ptr<mongo::connection>  con , std::string const&sdb):c(con),sub_db(sdb)
     {}
 
     insert_iterator<T> begin()

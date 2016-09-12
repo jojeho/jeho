@@ -5,14 +5,16 @@
 
 #include "query.hpp"
 #include  "common.hpp"
-
+#include <jeho/db/meta.hpp>
 #include "boost/hana.hpp"
 #include "boost/lexical_cast.hpp"
-
+#include <jeho/io/text_archive.hpp>
 
 using  ptime = std::chrono::time_point<std::chrono::system_clock>;
 
 namespace mongo {
+
+  using namespace jeho::db;
   
   template <typename T>
   std::enable_if_t<std::is_same<T, ptime>::value,
@@ -20,6 +22,30 @@ namespace mongo {
     return T(ele.get_date());
   }
 
+  template <typename T>
+  std::enable_if_t<boost::hana::Struct<T>::value,
+		   T> bind(bsoncxx::document::element const& ele) {
+    std::string s(ele.get_utf8().value.to_string().data());
+
+    T t;
+    std::stringstream ss(s);
+    jeho::io::in<jeho::io::text_archive> in(ss,t);
+    return t;
+  }
+
+  template <typename T>
+  std::enable_if_t<is_vector<T>::value,
+		   T> bind(bsoncxx::document::element const& ele) {
+    std::string s(ele.get_utf8().value.to_string().data());
+
+    T t;
+    std::stringstream ss(s);
+    jeho::io::in<jeho::io::text_archive> in(ss,t);
+    return t;
+  }
+
+  
+  
   template <typename T>
   std::enable_if_t<std::is_same<T, long>::value,
 		   long> bind(bsoncxx::document::element const& ele) {
@@ -54,9 +80,37 @@ namespace mongo {
     return bsoncxx::types::b_date{x};
   }
 
+      
   template <typename T>
-  std::enable_if_t<!std::is_same<T, ptime>::value,
-		   T> to(T const& in) {
+  std::enable_if_t<boost::hana::Struct<T>::value,
+		   std::string 
+		   >
+  to(T const& t)
+  {
+    std::stringstream ss;
+    jeho::io::out<jeho::io::text_archive> out(ss , t);
+    return ss.str();
+  }
+
+
+  template <typename T>
+  std::enable_if_t<is_vector<T>::value,
+		   std::string 
+		   >
+  to(T const& t)
+  {
+    std::stringstream ss;
+    jeho::io::out<jeho::io::text_archive> out(ss , t);
+    return ss.str();
+  }
+
+  
+  template <typename T>
+  std::enable_if_t<!std::is_same<T, ptime>::value
+		   &&!boost::hana::Struct<T>::value
+		   &&!is_vector<T>::value
+		   ,T>
+  to(T const& in) {
     return in;
   }
 
@@ -72,7 +126,7 @@ struct connection
     //mongocxx::instance inst{};
     conn =  mongocxx::client{mongocxx::uri{constring}};
     db = conn[db_name];
-    std::cout<<"connected to "<<constring<<" db:"<<db_name<<std::endl;
+    //std::cout<<"connected to "<<constring<<" db:"<<db_name<<std::endl;
 
   }
 
@@ -89,12 +143,11 @@ struct connection
     class iterator;
     std::shared_ptr<mongocxx::collection> col;
     std::shared_ptr<mongocxx::cursor> cur;
-    bsoncxx::builder::stream::document ff;
-    //a/mongocxx::cursor::iterator it;
-    cursor(std::shared_ptr<connection> const& con, jeho::db::query const& q)
+    bsoncxx::builder::stream::document query;
+    cursor(std::shared_ptr<connection> con, jeho::db::query const& q)
     {
-      col = std::make_shared<mongocxx::collection>(con->db[jeho::db::type_name<T>()]);
-      auto query = make_query<T>(q);
+      col = std::make_shared<mongocxx::collection>(con->db[jeho::db::table_name<T>()]);
+      query = make_query<T>(q);
       cur = std::make_shared<mongocxx::cursor>(col->find(query.view()));
     }
 
@@ -102,9 +155,9 @@ struct connection
 	   ,std::string sub_db
 	   ,jeho::db::query const& q)
     {
-      col = std::make_shared<mongocxx::collection>(con->db[sub_db +"." + jeho::db::type_name<T>()]);
-      std::cout<<sub_db +"." + jeho::db::type_name<T>()<<std::endl;
-      auto query = make_query<T>(q);
+      col = std::make_shared<mongocxx::collection>(con->db[jeho::db::table_name<T>() + "." + sub_db]);
+      //std::cout<<sub_db +"." + jeho::db::type_name<T>()<<std::endl;
+      query = make_query<T>(q);
       cur = std::make_shared<mongocxx::cursor>(col->find(query.view()));
     }
 
@@ -113,6 +166,8 @@ struct connection
     
     iterator begin()
     {
+      cur = std::make_shared<mongocxx::cursor>(col->find(query.view()));
+      //cur = std::make_shared<mongocxx::cursor>(col->find({}));
       return iterator(std::begin(*cur));
     }
 
@@ -136,6 +191,7 @@ struct connection
       operator++();
     }
 
+    
     T operator*()
     {
       T result;
@@ -174,7 +230,8 @@ struct connection
     friend bool operator ==(const iterator & lhs , const iterator & rhs)
     {
       if(lhs.it == rhs.it) return true;
-      return &lhs == &rhs;
+      
+      return false;
     }
 
     friend bool operator != (iterator const&lhs ,
@@ -184,75 +241,25 @@ struct connection
     }
   };
 
-
-  // template<typename T>
-  // struct select_iterator : std::iterator<std::input_iterator_tag, T>
-  // {
-  //   cursor<T> c_;
-  //   typename cursor<T>::iterator  it;
-  //   typename cursor<T>::iterator  e;
-  //   select_iterator(connection const&con ,jeho::db::query const&q):c_(con,q)
-  // 								  ,it(c_.begin())
-  // 								  ,e(c_.end())
-  //   {}
-
-  //   select_iterator():it(c_.begin()),e(c_.end())
-  //   {}
-          
-  //   select_iterator& operator++()
-  //   {
-  //     (it)++;
-  //     return *this;
-  //   }
-
-  //   void operator++(int)
-  //   {
-  //     operator++();
-  //   }
-
-  //   T operator*() 
-  //   {
-  //     return *it;
-  //   }
-
-  // private:
-  //   friend bool operator !=(select_iterator const&lhs , select_iterator const&rhs)
-  //   {
-  //     return lhs.it != lhs.e;
-  //   }
-
-  //   friend bool operator ==(select_iterator const&lhs , select_iterator const&rhs)
-  //   {
-  //     if(lhs.c_ == rhs.c_)
-  // 	{
-  // 	  return true;
-  // 	}
-
-  //     return &lhs == &rhs;
-  //   }
-  // };
-  
   template<typename T>
   struct insert_iterator:std::iterator<std::input_iterator_tag , T>
   {
     typedef insert_iterator<T> self;
     mongocxx::collection col_;
-    std::shared_ptr<connection> const& con_;
+    std::shared_ptr<connection>  con_;
     T t_;
-    insert_iterator(std::shared_ptr<connection> const& con):con_(con)
+    insert_iterator(std::shared_ptr<connection>  con):con_(con)
     {
-      auto name = jeho::db::type_name<T>();
-      std::cout<<" name "<<name<<std::endl;
+      auto name = jeho::db::table_name<T>();
+      //std::cout<<" name "<<name<<std::endl;
       col_ = con_->db[name];
     }
 
-    insert_iterator(std::shared_ptr<connection> const& con ,std::string const& sub_db):con_(con)
+    insert_iterator(std::shared_ptr<connection>  con ,std::string const& sub_db):con_(con)
     {
-      auto name = jeho::db::type_name<T>();
-      std::cout<<" name "<<name<<std::endl;
-      col_ = con_->db[name + "." + sub_db];
+      auto table_name = jeho::db::table_name<T>() + "." + sub_db;
+      col_ = con_->db[table_name];
     }
-
     
     self& operator++()
     {
@@ -281,7 +288,19 @@ struct connection
     
   };
 
+  template<typename T>
+  void remove_table(std::shared_ptr<connection>  con , std::string sub_db)
+  {
+    auto col = con->db[jeho::db::table_name<T>() + "." + sub_db];
+   col.drop();
+  }
 
+  template<typename T>
+  void remove_table(std::shared_ptr<connection>  con )
+  {
+    auto col = con->db[jeho::db::table_name<T>()];
+   col.drop();
+  }
 
 
 }

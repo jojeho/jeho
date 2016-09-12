@@ -4,3 +4,5 @@
 #include <mongocxx/instance.hpp>
 #include <mongocxx/uri.hpp>
 
+#include <boost/serialization/list.hpp>
+#include <boost/serialization/vector.hpp>
